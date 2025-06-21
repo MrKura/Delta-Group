@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Delta Group - Panel Agentów</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .fade-in {
+      animation: fadeIn 1.5s ease-in-out;
+    }
+  </style>
+</head>
+<body class="bg-black text-white font-sans">
+
+  <!-- Splash screen -->
+  <div id="splash" class="fixed inset-0 flex items-center justify-center bg-black z-50">
+    <img src="ChatGPT Image 21 cze 2025, 18_57_38.png" alt="Delta Group Logo" class="w-48 h-48 fade-in">
+  </div>
+
+  <!-- Login screen -->
+  <div id="loginScreen" class="hidden min-h-screen flex items-center justify-center">
+    <div class="bg-gray-900 p-8 rounded shadow-lg w-96">
+      <h2 class="text-2xl mb-4 text-center font-bold">Delta Group - Logowanie</h2>
+      <input id="username" type="text" placeholder="Login" class="w-full mb-3 px-4 py-2 rounded bg-gray-800 text-white" />
+      <input id="password" type="password" placeholder="Hasło" class="w-full mb-4 px-4 py-2 rounded bg-gray-800 text-white" />
+      <button onclick="login()" class="w-full bg-red-600 hover:bg-red-700 py-2 rounded">Zaloguj się</button>
+    </div>
+  </div>
+
+  <!-- Main Panel -->
+  <div id="mainPanel" class="hidden flex">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-gray-900 h-screen p-6 space-y-4 overflow-y-auto">
+      <h2 class="text-center font-bold text-xl mb-4">Delta Group</h2>
+      <button onclick="showSection('zlecenia')" class="w-full text-left hover:text-red-500">Zlecenia</button>
+      <button onclick="showSection('klienci')" class="w-full text-left hover:text-red-500">Klienci</button>
+      <button onclick="showSection('siedziba')" class="w-full text-left hover:text-red-500">Siedziba</button>
+      <button onclick="showSection('blacklist')" class="w-full text-left hover:text-red-500">Blacklist</button>
+      <button onclick="showSection('podglad')" class="w-full text-left hover:text-red-500">Wszystkie dane</button>
+      <button id="szefTab" onclick="showSection('szef')" class="hidden w-full text-left hover:text-yellow-500">Szef</button>
+    </aside>
+
+    <!-- Content Area -->
+    <main class="flex-1 p-6 overflow-y-auto">
+      <div class="flex justify-end mb-4">
+        <img src="ChatGPT Image 21 cze 2025, 18_57_38.png" alt="Logo" class="w-24 h-24">
+      </div>
+
+      <!-- Sekcje -->
+      <div id="zlecenia" class="hidden">
+        <h2 class="text-2xl mb-4">Zlecenia</h2>
+        <form onsubmit="saveData(event, 'zlecenia')" class="bg-gray-800 p-4 rounded mb-6">
+          <input type="text" placeholder="Nr zlecenia" class="w-full mb-2 px-3 py-2 rounded bg-gray-700" required />
+          <input type="text" placeholder="Nr telefonu" class="w-full mb-2 px-3 py-2 rounded bg-gray-700" required />
+          <input type="text" placeholder="Miejsce śmierci" class="w-full mb-2 px-3 py-2 rounded bg-gray-700" required />
+          <input type="text" placeholder="Adres zamieszkania" class="w-full mb-2 px-3 py-2 rounded bg-gray-700" required />
+          <input type="file" class="w-full mb-2" />
+          <button type="submit" class="bg-red-600 px-4 py-2 rounded">Zapisz</button>
+        </form>
+      </div>
+
+      <div id="klienci" class="hidden">
+        <h2 class="text-2xl mb-4">Klienci</h2>
+        <form onsubmit="saveData(event, 'klienci')" class="bg-gray-800 p-4 rounded mb-6">
+          <input type="text" placeholder="Imię i nazwisko" class="w-full mb-2 px-3 py-2 rounded bg-gray-700" required />
+          <input type="text" placeholder="Nr telefonu" class="w-full mb-2 px-3 py-2 rounded bg-gray-700" required />
+          <input type="file" class="w-full mb-2" />
+          <button type="submit" class="bg-red-600 px-4 py-2 rounded">Dodaj Klienta</button>
+        </form>
+      </div>
+
+      <div id="siedziba" class="hidden">
+        <h2 class="text-2xl mb-4">Siedziba</h2>
+        <form onsubmit="saveData(event, 'siedziba')" class="bg-gray-800 p-4 rounded mb-6">
+          <input type="file" class="w-full mb-2" required />
+          <button type="submit" class="bg-red-600 px-4 py-2 rounded">Dodaj Zdjęcie</button>
+        </form>
+      </div>
+
+      <div id="blacklist" class="hidden">
+        <h2 class="text-2xl mb-4">Blacklist</h2>
+        <form onsubmit="saveData(event, 'blacklist')" class="bg-gray-800 p-4 rounded mb-6">
+          <input type="text" placeholder="Imię i nazwisko" class="w-full mb-2 px-3 py-2 rounded bg-gray-700" required />
+          <input type="file" class="w-full mb-2" required />
+          <button type="submit" class="bg-red-600 px-4 py-2 rounded">Dodaj</button>
+        </form>
+      </div>
+
+      <div id="podglad" class="hidden">
+        <h2 class="text-2xl mb-4">Wszystkie dane</h2>
+        <div id="previewData" class="space-y-4"></div>
+      </div>
+
+      <div id="szef" class="hidden">
+        <h2 class="text-2xl mb-4">Panel Szefa</h2>
+        <form class="bg-gray-800 p-4 rounded mb-6">
+          <input type="text" placeholder="Login agenta" class="w-full mb-2 px-3 py-2 rounded bg-gray-700" required />
+          <input type="password" placeholder="Hasło agenta" class="w-full mb-2 px-3 py-2 rounded bg-gray-700" required />
+          <div class="flex mb-2">
+            <input id="agentNumber" type="number" placeholder="Nr agenta 43–77" min="43" max="77" class="flex-1 px-3 py-2 rounded bg-gray-700" required />
+            <button type="button" onclick="generateAgentNumber()" class="ml-2 bg-blue-600 px-3 py-2 rounded">Generuj</button>
+          </div>
+          <input type="file" class="w-full mb-2" />
+          <button type="submit" class="bg-green-600 px-4 py-2 rounded">Dodaj konto agenta</button>
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    setTimeout(() => {
+      splash.style.display = 'none';
+      loginScreen.classList.remove('hidden');
+    }, 1000);
+
+    function login() {
+      const u = document.getElementById('username').value;
+      const p = document.getElementById('password').value;
+      if (u === '47' && p === '4477') {
+        document.getElementById('szefTab').classList.remove('hidden');
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('mainPanel').classList.remove('hidden');
+        showSection('szef');
+      } else if (/^AGENT\d+$/.test(u) && p === 'agent123') {
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('mainPanel').classList.remove('hidden');
+        showSection('zlecenia');
+      } else {
+        alert('Błędny login lub hasło');
+      }
+    }
+
+    function showSection(id) {
+      document.querySelectorAll('main > div').forEach(div => div.classList.add('hidden'));
+      document.getElementById(id).classList.remove('hidden');
+      if (id === 'podglad') loadPreview();
+    }
+
+    function generateAgentNumber() {
+      const num = Math.floor(Math.random() * (77 - 43 + 1)) + 43;
+      document.getElementById('agentNumber').value = num;
+    }
+
+    function saveData(event, section) {
+      event.preventDefault();
+      const form = event.target;
+      const data = Array.from(form.querySelectorAll('input')).map(input => input.value || input.placeholder);
+      const stored = JSON.parse(localStorage.getItem(section)) || [];
+      stored.push(data);
+      localStorage.setItem(section, JSON.stringify(stored));
+      alert('Zapisano!');
+      form.reset();
+    }
+
+    function loadPreview() {
+      const sections = ['zlecenia', 'klienci', 'siedziba', 'blacklist'];
+      const container = document.getElementById('previewData');
+      container.innerHTML = '';
+      sections.forEach(name => {
+        const data = JSON.parse(localStorage.getItem(name)) || [];
+        if (data.length > 0) {
+          const box = document.createElement('div');
+          box.className = 'bg-gray-800 p-4 rounded';
+          box.innerHTML = `<h3 class='text-xl mb-2 capitalize'>${name}</h3>` +
+            data.map(entry => `<p class='mb-1'>• ${entry.join(' | ')}</p>`).join('');
+          container.appendChild(box);
+        }
+      });
+    }
+  </script>
+</body>
+</html>
